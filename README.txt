@@ -39,5 +39,4 @@ TAG_Compound("Data"): 19 entries
  
 << Source >> 
  
-The source for NbtViewer is available at 
-https://github.com/mblaine/NbtViewer. 
+The source for NbtViewer is available at https://github.com/mblaine/NbtViewer.
