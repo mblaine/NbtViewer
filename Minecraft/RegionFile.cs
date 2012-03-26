@@ -29,7 +29,7 @@ namespace Minecraft
         public void Read(String path)
         {
             Chunks = new List<Chunk>();
-            Match m = Regex.Match(path, @"r\.(-?\d+)\.(-?\d+)\.mca");
+            Match m = Regex.Match(path, @"r\.(-?\d+)\.(-?\d+)\.mc[ar]");
             Coords.X = int.Parse(m.Groups[1].Value);
             Coords.Z = int.Parse(m.Groups[2].Value);
 
@@ -209,7 +209,7 @@ namespace Minecraft
 
         public static String ToString(String path)
         {
-            Match m = Regex.Match(path, @"r\.(-?\d+)\.(-?\d+)\.mca");
+            Match m = Regex.Match(path, @"r\.(-?\d+)\.(-?\d+)\.mc[ar]");
             Coord c = new Coord(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value));
             Coord c2 = new Coord(int.Parse(m.Groups[1].Value) + 1, int.Parse(m.Groups[2].Value) + 1);
             c.RegiontoAbsolute();
