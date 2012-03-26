@@ -106,6 +106,8 @@
             this.Controls.Add(this.btnFindNext);
             this.Controls.Add(this.txtFind);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Find";
             this.ShowIcon = false;
             this.Text = "Find";

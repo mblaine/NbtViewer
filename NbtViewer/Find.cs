@@ -32,8 +32,8 @@ namespace NbtViewer
         {
             if (keyData == Keys.Enter)
             {
-                btnFindNext_Click(this, null);
                 btnFindNext.Focus();
+                btnFindNext_Click(this, null);
                 return true;
             }
             else if (keyData == Keys.Escape)
@@ -50,6 +50,10 @@ namespace NbtViewer
                 ((Form1)Owner).TextBox.ScrollToCaret();
             else
                 MessageBox.Show(this, String.Format("Unable to find \"{0}\".", txtFind.Text), "Find", MessageBoxButtons.OK);
+                
+            this.Focus();
+            txtFind.Focus();
+            txtFind.SelectAll();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
