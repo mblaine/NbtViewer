@@ -11,6 +11,8 @@ namespace NbtViewer
     public partial class Form1 : Form
     {
         private String lastPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\.minecraft\saves";
+        private String lastFile = "";
+        private String lastSavePath = AppDomain.CurrentDomain.BaseDirectory;
         private Find findForm = null;
 
         public Form1()
@@ -28,14 +30,14 @@ namespace NbtViewer
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.InitialDirectory = lastPath;
             dialog.Filter = "Minecraft (*.dat, mcr, mca)|*.dat;*.mcr;*.mca";
-            dialog.RestoreDirectory = false;
 
             if (dialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            lastPath = dialog.FileName;
+            lastPath = Path.GetDirectoryName(dialog.FileName);
+            lastFile = Path.GetFileName(dialog.FileName);
             txtOutput.Text = "";
-            if (Path.GetExtension(lastPath) == ".dat")
+            if (Path.GetExtension(dialog.FileName) == ".dat")
             {
                 MemoryStream data = new MemoryStream();
                 using (GZipStream decompress = new GZipStream(dialog.OpenFile(), CompressionMode.Decompress))
@@ -49,7 +51,7 @@ namespace NbtViewer
             }
             else
             {
-                txtOutput.Text = new RegionFile(lastPath).ToString();
+                txtOutput.Text = new RegionFile(dialog.FileName).ToString();
             }
 
             int indent = 0;
@@ -70,6 +72,27 @@ namespace NbtViewer
                     sb.Append(new String('\t', indent)).AppendLine(line);
             }
             txtOutput.Text = sb.ToString();
+        }
+
+
+        private void saveAsTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.InitialDirectory = lastSavePath;
+            dialog.FileName = lastFile + ".txt";
+            dialog.Filter = "Text Documents (*.txt)|*.txt";
+
+            if (dialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            lastSavePath = Path.GetDirectoryName(dialog.FileName);
+
+            using (StreamWriter sw = new StreamWriter(dialog.FileName))
+            {
+                sw.Write(txtOutput.Text);
+                sw.Flush();
+                sw.Close();
+            }
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
