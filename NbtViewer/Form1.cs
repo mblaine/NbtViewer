@@ -79,6 +79,28 @@ namespace NbtViewer
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            OpenFindForm();
+        }
+
+        private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Find.LastSearch == null || Find.LastSearch.Length == 0)
+                OpenFindForm();
+            else
+                Find.FindNext(Find.LastSearch, true, this, this);
+        }
+
+
+        private void findPreviousToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Find.LastSearch == null || Find.LastSearch.Length == 0)
+                OpenFindForm();
+            else
+                Find.FindNext(Find.LastSearch, false, this, this);
+        }
+
+        private void OpenFindForm()
+        {
             if (findForm == null || findForm.IsDisposed)
                 findForm = new Find();
             if (findForm.Visible)
@@ -87,7 +109,7 @@ namespace NbtViewer
                 findForm.Show(this);
         }
 
-        public TextBox TextBox
+        internal TextBox TextBox
         {
             get
             {
@@ -121,5 +143,9 @@ namespace NbtViewer
                         new int[] { tabWidth * characterWidth });
         }
 
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new About().ShowDialog(this);
+        }
     }
 }

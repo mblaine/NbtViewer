@@ -5,7 +5,8 @@ namespace NbtViewer
 {
     public partial class Find : Form
     {
-        private static String lastSearch = "";
+        internal static String LastSearch = "";
+        internal static bool LastSearchForward = true;
 
         public Find()
         {
@@ -14,12 +15,15 @@ namespace NbtViewer
 
         private void Find_Load(object sender, EventArgs e)
         {
-            txtFind.Text = lastSearch;
+            txtFind.Text = LastSearch;
+            radDown.Checked = LastSearchForward;
+            radUp.Checked = !LastSearchForward;
         }
 
         private void Find_FormClosing(object sender, FormClosingEventArgs e)
         {
-            lastSearch = txtFind.Text;
+            LastSearch = txtFind.Text;
+            LastSearchForward = radDown.Checked;
         }
 
         private void Find_Activated(object sender, EventArgs e)
@@ -44,12 +48,19 @@ namespace NbtViewer
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        internal static void FindNext(String search, bool forward, Form1 target, Form msgBoxParent)
+        {
+            if (Search(search, target.TextBox, forward))
+                target.TextBox.ScrollToCaret();
+            else
+                MessageBox.Show(msgBoxParent, String.Format("Unable to find \"{0}\".", search), "Find", MessageBoxButtons.OK);
+        }
+
         private void btnFindNext_Click(object sender, EventArgs e)
         {
-            if (Search(txtFind.Text, ((Form1)Owner).TextBox, radDown.Checked))
-                ((Form1)Owner).TextBox.ScrollToCaret();
-            else
-                MessageBox.Show(this, String.Format("Unable to find \"{0}\".", txtFind.Text), "Find", MessageBoxButtons.OK);
+            LastSearch = txtFind.Text;
+            LastSearchForward = radDown.Checked;
+            FindNext(LastSearch, LastSearchForward, (Form1)this.Owner, this);
                 
             this.Focus();
             txtFind.Focus();
@@ -61,7 +72,7 @@ namespace NbtViewer
             this.Close();
         }
 
-        private bool Search(String search, TextBox target, bool forward)
+        private static bool Search(String search, TextBox target, bool forward)
         {
             if (forward)
             {
