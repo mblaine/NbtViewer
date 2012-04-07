@@ -139,7 +139,7 @@ namespace Minecraft
                         Chunk c = Chunks[chunkX, chunkZ];
                         if (c == null)
                             continue;
-                    
+
                         int i = 4 * (chunkX + chunkZ * 32);
 
                         byte[] temp = BitConverter.GetBytes(c.Timestamp);
@@ -161,12 +161,13 @@ namespace Minecraft
 
                         if (c.RawData == null || c.Dirty)
                         {
-                            MemoryStream mem = new MemoryStream();
-                            c.Root.Write(mem);
-                            temp = mem.ToArray();
                             //this is the performance bottleneck when doing 1024 chunks in a row;
                             //trying to only do when necessary
-                            c.RawData = ZlibStream.CompressBuffer(temp);
+                            MemoryStream mem = new MemoryStream();
+                            ZlibStream zlib = new ZlibStream(mem, CompressionMode.Compress);
+                            c.Root.Write(zlib);
+                            zlib.Close();
+                            c.RawData = mem.ToArray();
                             c.CompressionType = 2;
                         }
 
@@ -200,17 +201,17 @@ namespace Minecraft
         public override String ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Region [{0}, {1}]\r\n{{\r\n", Coords.X, Coords.Z);
+            sb.AppendFormat("Region [{0}, {1}]{2}{{{2}", Coords.X, Coords.Z, Environment.NewLine);
             foreach (Chunk c in Chunks)
                 sb.Append(c.ToString());
-            sb.Append("}\r\n");
+            sb.AppendLine("}");
             return sb.ToString();
         }
 
         public static String ToString(String path)
         {
             Match m = Regex.Match(path, @"r\.(-?\d+)\.(-?\d+)\.mc[ar]");
-            Coord c = new Coord(int.Parse(m.Groups[1].Value),int.Parse(m.Groups[2].Value));
+            Coord c = new Coord(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value));
             Coord c2 = new Coord(int.Parse(m.Groups[1].Value) + 1, int.Parse(m.Groups[2].Value) + 1);
             c.RegiontoAbsolute();
             c2.RegiontoAbsolute();
